@@ -3,21 +3,22 @@
 
 #include <sm_ringbuffer.h>
 
-unsigned int pow2roundup(unsigned int x) {
-    --x;
-    x |= x >> 1;
-    x |= x >> 2;
-    x |= x >> 4;
-    x |= x >> 8;
-    x |= x >> 16;
-    return x + 1;
+unsigned int pow2rounddown(unsigned int x) {
+    unsigned int count = 0;
+
+    while (x) {
+        x >>= 1;
+        count++;
+    }
+
+    return 1 << (count - 1);
 }
 
 unsigned int sm_ringbuffer_init(sm_ringbuffer_t *ringbuffer, void *buffer, unsigned int buffer_size,
                                 unsigned int element_size) {
     ringbuffer->in = 0;
     ringbuffer->out = 0;
-    unsigned int size = pow2roundup(buffer_size / element_size);
+    unsigned int size = pow2rounddown(buffer_size / element_size);
     ringbuffer->mask = size - 1;
     ringbuffer->element_size = element_size;
     ringbuffer->data = buffer;
