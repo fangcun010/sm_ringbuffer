@@ -36,6 +36,36 @@ unsigned int sm_ringbuffer_push(sm_ringbuffer_t *ringbuffer, void *data) {
     return 1;
 }
 
+unsigned int sm_ringbuffer_peek_in_place(sm_ringbuffer_t *ringbuffer, void **data) {
+    if (sm_ringbuffer_empty(ringbuffer))
+        return 0;
+
+    void *src_data = ringbuffer->data + (ringbuffer->out & ringbuffer->mask) * ringbuffer->element_size;
+    *data = src_data;
+
+    return 1;
+}
+
+unsigned int sm_ringbuffer_skip_one(sm_ringbuffer_t *ringbuffer) {
+    atomic_signal_fence(memory_order_release);
+    ringbuffer->out++;
+}
+
+unsigned int sm_ringbuffer_poke_in_place(sm_ringbuffer_t *ringbuffer, void **data) {
+    if (sm_ringbuffer_full(ringbuffer))
+        return 0;
+
+    void *dest_data = ringbuffer->data + (ringbuffer->in & ringbuffer->mask) * ringbuffer->element_size;
+    *data = dest_data;
+
+    return 1;
+}
+
+unsigned int sm_ringbuffer_push_in_place(sm_ringbuffer_t *ringbuffer) {
+    atomic_signal_fence(memory_order_release);
+    ringbuffer->in++;
+}
+
 unsigned int sm_ringbuffer_pop(sm_ringbuffer_t *ringbuffer, void *data) {
     if (sm_ringbuffer_empty(ringbuffer))
         return 0;
@@ -81,6 +111,29 @@ unsigned int sm_messagequeue_push(sm_messagequeue_t *messagequeue, void *data, u
     return 1;
 }
 
+unsigned int sm_messagequeue_peek_in_place(sm_messagequeue_t *messagequeue, void **data,
+                                           unsigned int *element_size) {
+    if (sm_messagequeue_empty(messagequeue))
+        return 0;
+
+    void *src_data = messagequeue->data + (messagequeue->out & messagequeue->mask);
+    *element_size = *((unsigned int *) src_data);
+    *data = src_data + sizeof(*element_size);
+
+    return 1;
+}
+
+unsigned int sm_messagequeue_skip_one(sm_messagequeue_t *messagequeue) {
+    if (sm_messagequeue_empty(messagequeue))
+        return 0;
+
+    void *src_data = messagequeue->data + (messagequeue->out & messagequeue->mask);
+    unsigned int element_size = *((unsigned int *) src_data);
+
+    atomic_signal_fence(memory_order_release);
+    messagequeue->out += element_size + sizeof(element_size);
+}
+
 unsigned int sm_messagequeue_pop(sm_messagequeue_t *messagequeue, void *data, unsigned int *element_size) {
     if (sm_messagequeue_empty(messagequeue))
         return 0;
@@ -90,6 +143,29 @@ unsigned int sm_messagequeue_pop(sm_messagequeue_t *messagequeue, void *data, un
     memcpy(data, src_data + sizeof(*element_size), *element_size);
     atomic_signal_fence(memory_order_release);
     messagequeue->out += *element_size + sizeof(*element_size);
+
+    return 1;
+}
+
+unsigned int sm_messagequeue_poke_in_place(sm_messagequeue_t *messagequeue, void **data, unsigned int element_size) {
+    if (sm_messagequeue_full(messagequeue))
+        return 0;
+
+    void *dest_data = messagequeue->data + (messagequeue->in & messagequeue->mask);
+    *((unsigned int *) dest_data) = element_size;
+    *data = dest_data + sizeof(element_size);
+
+    return 1;
+}
+
+unsigned int sm_messagequeue_push_in_place(sm_messagequeue_t *messagequeue) {
+    if (sm_messagequeue_full(messagequeue))
+        return 0;
+
+    void *dest_data = messagequeue->data + (messagequeue->in & messagequeue->mask);
+    unsigned int element_size = *((unsigned int *) dest_data);
+    atomic_signal_fence(memory_order_release);
+    messagequeue->in += element_size + sizeof(element_size);
 
     return 1;
 }

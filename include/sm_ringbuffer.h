@@ -12,6 +12,14 @@ typedef struct sm_ringbuffer_t {
 extern unsigned int sm_ringbuffer_init(sm_ringbuffer_t *ringbuffer, void *buffer, unsigned int buffer_size,
                                        unsigned int element_size);
 
+extern unsigned int sm_ringbuffer_peek_in_place(sm_ringbuffer_t *ringbuffer,void **data);
+
+extern unsigned int sm_ringbuffer_skip_one(sm_ringbuffer_t *ringbuffer);
+
+extern unsigned int sm_ringbuffer_poke_in_place(sm_ringbuffer_t *ringbuffer,void **data);
+
+extern unsigned int sm_ringbuffer_push_in_place(sm_ringbuffer_t *ringbuffer);
+
 extern unsigned int sm_ringbuffer_push(sm_ringbuffer_t *ringbuffer, void *data);
 
 extern unsigned int sm_ringbuffer_pop(sm_ringbuffer_t *ringbuffer, void *data);
@@ -30,6 +38,15 @@ typedef struct sm_messagequeue_t {
 } sm_messagequeue_t;
 
 extern unsigned int sm_messagequeue_init(sm_messagequeue_t *messagequeue, void *buffer, unsigned int buffer_size);
+
+extern unsigned int sm_messagequeue_peek_in_place(sm_messagequeue_t *messagequeue,void **data,
+                                                  unsigned int *element_size);
+
+extern unsigned int sm_messagequeue_skip_one(sm_messagequeue_t *messagequeue);
+
+extern unsigned int sm_messagequeue_poke_in_place(sm_messagequeue_t *messagequeue,void **data,unsigned int element_size);
+
+extern unsigned int sm_messagequeue_push_in_place(sm_messagequeue_t *messagequeue);
 
 extern unsigned int sm_messagequeue_push(sm_messagequeue_t *messagequeue, void *data,unsigned int element_size);
 
