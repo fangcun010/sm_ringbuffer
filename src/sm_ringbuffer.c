@@ -22,6 +22,8 @@ unsigned int sm_ringbuffer_init(sm_ringbuffer_t *ringbuffer, void *buffer, unsig
     ringbuffer->mask = size - 1;
     ringbuffer->element_size = element_size;
     ringbuffer->data = buffer;
+
+    return 1;
 }
 
 unsigned int sm_ringbuffer_push(sm_ringbuffer_t *ringbuffer, void *data) {
@@ -49,6 +51,8 @@ unsigned int sm_ringbuffer_peek_in_place(sm_ringbuffer_t *ringbuffer, void **dat
 unsigned int sm_ringbuffer_skip_one(sm_ringbuffer_t *ringbuffer) {
     atomic_signal_fence(memory_order_release);
     ringbuffer->out++;
+
+    return 1;
 }
 
 unsigned int sm_ringbuffer_poke_in_place(sm_ringbuffer_t *ringbuffer, void **data) {
@@ -64,6 +68,8 @@ unsigned int sm_ringbuffer_poke_in_place(sm_ringbuffer_t *ringbuffer, void **dat
 unsigned int sm_ringbuffer_push_in_place(sm_ringbuffer_t *ringbuffer) {
     atomic_signal_fence(memory_order_release);
     ringbuffer->in++;
+
+    return 1;
 }
 
 unsigned int sm_ringbuffer_pop(sm_ringbuffer_t *ringbuffer, void *data) {
@@ -96,6 +102,8 @@ unsigned int sm_messagequeue_init(sm_messagequeue_t *messagequeue, void *buffer,
     unsigned int size = pow2rounddown(buffer_size);
     messagequeue->mask = size - 1;
     messagequeue->data = buffer;
+
+    return 1;
 }
 
 unsigned int sm_messagequeue_push(sm_messagequeue_t *messagequeue, void *data, unsigned int element_size) {
