@@ -42,6 +42,8 @@ extern unsigned int sm_ringbuffer_full(sm_ringbuffer_t *ringbuffer);
 
 extern unsigned int sm_ringbuffer_length(sm_ringbuffer_t *ringbuffer);
 
+extern unsigned int sm_ringbuffer_capacity(sm_ringbuffer_t *ringbuffer);
+
 typedef struct sm_shared_messagequeue_data_t {
   unsigned int in;
   unsigned int out;

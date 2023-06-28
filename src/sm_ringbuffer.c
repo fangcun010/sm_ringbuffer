@@ -116,6 +116,10 @@ unsigned int sm_ringbuffer_length(sm_ringbuffer_t *ringbuffer) {
     return ringbuffer->shared_ringbuffer_data->in - ringbuffer->shared_ringbuffer_data->out;
 }
 
+unsigned int sm_ringbuffer_capacity(sm_ringbuffer_t *ringbuffer) {
+    return ringbuffer->shared_ringbuffer_data->mask + 1;
+}
+
 unsigned int sm_messagequeue_init(sm_messagequeue_t *messagequeue,
                                   sm_shared_messagequeue_data_t *shared_messagequeue_data,
                                   void *buffer, unsigned int buffer_size) {
