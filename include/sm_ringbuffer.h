@@ -1,16 +1,20 @@
 #ifndef SM_RINGBUFFER_SM_RINGBUFFER_H
 #define SM_RINGBUFFER_SM_RINGBUFFER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct sm_shared_ringbuffer_data_t {
-    unsigned int in;
-    unsigned int out;
-    unsigned int mask;
-    unsigned int element_size;
+  unsigned int in;
+  unsigned int out;
+  unsigned int mask;
+  unsigned int element_size;
 } sm_shared_ringbuffer_data_t;
 
 typedef struct sm_ringbuffer_t {
-    void *base_address;
-    sm_shared_ringbuffer_data_t *shared_ringbuffer_data;
+  void *base_address;
+  sm_shared_ringbuffer_data_t *shared_ringbuffer_data;
 } sm_ringbuffer_t;
 
 extern unsigned int sm_ringbuffer_init(sm_ringbuffer_t *ringbuffer, sm_shared_ringbuffer_data_t *shared_ringbuffer_data,
@@ -39,14 +43,14 @@ extern unsigned int sm_ringbuffer_full(sm_ringbuffer_t *ringbuffer);
 extern unsigned int sm_ringbuffer_length(sm_ringbuffer_t *ringbuffer);
 
 typedef struct sm_shared_messagequeue_data_t {
-    unsigned int in;
-    unsigned int out;
-    unsigned int mask;
+  unsigned int in;
+  unsigned int out;
+  unsigned int mask;
 } sm_shared_messagequeue_data_t;
 
 typedef struct sm_messagequeue_t {
-    void *base_address;
-    sm_shared_messagequeue_data_t *shared_messagequeue_data;
+  void *base_address;
+  sm_shared_messagequeue_data_t *shared_messagequeue_data;
 } sm_messagequeue_t;
 
 extern unsigned int sm_messagequeue_init(sm_messagequeue_t *messagequeue,
@@ -76,5 +80,9 @@ extern unsigned int sm_messagequeue_empty(sm_messagequeue_t *messagequeue);
 extern unsigned int sm_messagequeue_full(sm_messagequeue_t *messagequeue);
 
 extern unsigned int sm_messagequeue_length(sm_messagequeue_t *messagequeue);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //SM_RINGBUFFER_SM_RINGBUFFER_H
